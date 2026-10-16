@@ -34,7 +34,17 @@
 
 Não precisa instalar `adb` nem `scrcpy`: o build baixa a versão oficial do scrcpy para macOS, que já traz o `adb`, e coloca tudo dentro do app.
 
-## Compilar e instalar
+## Instalar
+
+Cole no Terminal:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/jhoff66/Visor/main/install.sh | bash
+```
+
+Ele baixa a última versão, coloca em `/Applications` e abre o app. Rodar de novo atualiza.
+
+## Compilar
 
 Só precisa das ferramentas de linha de comando do Xcode (`xcode-select --install`).
 
