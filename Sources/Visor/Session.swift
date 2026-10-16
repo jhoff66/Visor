@@ -10,6 +10,8 @@ final class Session: ObservableObject {
   @Published private(set) var log = ""
   @Published private(set) var errorSummary: String?
   @Published private(set) var lastRecording: URL?
+  /// Opções usadas na execução atual, para avisar quando mudarem durante o espelhamento.
+  @Published var startedOptions: Options?
 
   var onStateChange: (() -> Void)?
 
@@ -117,6 +119,12 @@ final class SessionStore: ObservableObject {
     return s
   }
 
+  /// Só para o modo --snapshot: finge que o dispositivo está espelhando.
+  func setMockRunning(_ serial: String, options: Options) {
+    session(for: serial).startedOptions = options
+    runningSerials.insert(serial)
+  }
+
   func isRunning(_ serial: String) -> Bool { runningSerials.contains(serial) }
 
   static var recordingsFolder: URL {
@@ -136,6 +144,7 @@ final class SessionStore: ObservableObject {
       recordURL = dir.appendingPathComponent("\(DeviceStore.safeFileName(device.name)) \(f.string(from: Date())).mp4")
     }
     let args = options.arguments(windowTitle: device.name, recordPath: recordURL?.path)
+    s.startedOptions = options
     s.start(arguments: args, recording: recordURL)
   }
 

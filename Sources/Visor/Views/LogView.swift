@@ -7,7 +7,6 @@ struct LogView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
-        Text("Log do scrcpy").font(.headline)
         Spacer()
         Button("Copiar tudo") {
           NSPasteboard.general.clearContents()
@@ -31,6 +30,7 @@ struct LogView: View {
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(.separator))
         .onChange(of: session.log) { _, _ in proxy.scrollTo("fim", anchor: .bottom) }
       }
+      .frame(height: 220)
     }
   }
 }

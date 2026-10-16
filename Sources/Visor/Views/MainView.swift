@@ -6,6 +6,10 @@ struct MainView: View {
   @State private var selection: String?
   @State private var showWifi = false
 
+  init(initialSelection: String? = nil) {
+    _selection = State(initialValue: initialSelection)
+  }
+
   private var selected: Device? {
     store.devices.first { $0.serial == selection } ?? store.devices.first
   }
@@ -16,7 +20,7 @@ struct MainView: View {
         .navigationSplitViewColumnWidth(min: 210, ideal: 240, max: 320)
     } detail: {
       if let device = selected {
-        DeviceDetailView(device: device)
+        DeviceDetailView(device: device, onWifi: { showWifi = true })
           .id(device.serial)
       } else {
         HelpView(problem: store.adbProblem, loaded: store.loaded)

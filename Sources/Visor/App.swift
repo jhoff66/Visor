@@ -24,7 +24,11 @@ struct VisorApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
   init() {
-    if CommandLine.arguments.contains("--check") { Toolchain.runCheckAndExit() }
+    let args = CommandLine.arguments
+    if args.contains("--check") { Toolchain.runCheckAndExit() }
+    if let i = args.firstIndex(of: "--snapshot") {
+      Snapshot.runAndExit(folder: i + 1 < args.count ? args[i + 1] : "snapshots")
+    }
   }
 
   var body: some Scene {
@@ -33,9 +37,9 @@ struct VisorApp: App {
         .environmentObject(DeviceStore.shared)
         .environmentObject(SessionStore.shared)
         .environmentObject(PresetStore.shared)
-        .frame(minWidth: 760, minHeight: 520)
+        .frame(minWidth: 900, minHeight: 560)
     }
-    .defaultSize(width: 920, height: 640)
+    .defaultSize(width: 1100, height: 760)
 
     MenuBarExtra("Visor", systemImage: "iphone.gen3") {
       MenuBarView()

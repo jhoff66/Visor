@@ -8,9 +8,7 @@ struct DeviceRow: View {
 
   var body: some View {
     HStack(spacing: 10) {
-      Image(systemName: device.isWifi ? "wifi" : "cable.connector")
-        .frame(width: 22)
-        .foregroundStyle(.secondary)
+      icon
       VStack(alignment: .leading, spacing: 2) {
         HStack(spacing: 6) {
           Text(device.name).font(.body.weight(.medium)).lineLimit(1)
@@ -19,16 +17,9 @@ struct DeviceRow: View {
               .help("Espelhando")
           }
         }
-        Text(device.serial).font(.caption).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
+        subtitle
       }
       Spacer(minLength: 4)
-      if !device.isReady {
-        Text(device.stateLabel)
-          .font(.caption2.weight(.medium))
-          .padding(.horizontal, 6).padding(.vertical, 2)
-          .background(Color.orange.opacity(0.18), in: Capsule())
-          .foregroundStyle(.orange)
-      }
     }
     .padding(.vertical, 3)
     .background(dropTargeted ? Color.accentColor.opacity(0.18) : .clear, in: RoundedRectangle(cornerRadius: 6))
@@ -36,5 +27,45 @@ struct DeviceRow: View {
       Task { await store.handleDrop(urls.filter { $0.isFileURL }, on: device) }
       return true
     } isTargeted: { dropTargeted = $0 }
+  }
+
+  private var stateColor: Color {
+    switch device.state {
+    case "device": return .blue
+    case "unauthorized": return .orange
+    default: return .gray
+    }
+  }
+
+  // Quadradinho com a cor do estado e o selo de Wi-Fi ou cabo no canto.
+  private var icon: some View {
+    Image(systemName: "iphone.gen3")
+      .font(.system(size: 14, weight: .medium))
+      .foregroundStyle(.white)
+      .frame(width: 28, height: 28)
+      .background(stateColor.gradient, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+      .overlay(alignment: .bottomTrailing) {
+        Image(systemName: device.isWifi ? "wifi" : "cable.connector")
+          .font(.system(size: 7, weight: .bold))
+          .foregroundStyle(.white)
+          .frame(width: 13, height: 13)
+          .background(Circle().fill(Color(white: 0.2)))
+          .overlay(Circle().stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5))
+          .offset(x: 4, y: 4)
+      }
+      .padding(.trailing, 2)
+  }
+
+  @ViewBuilder
+  private var subtitle: some View {
+    if !device.isReady {
+      Text("\(device.connectionLabel) · \(device.stateLabel)")
+        .font(.caption).foregroundStyle(.orange).lineLimit(1)
+    } else if let v = device.info?.androidVersion, !v.isEmpty {
+      Text("\(device.connectionLabel) · Android \(v)")
+        .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+    } else {
+      Text(device.serial).font(.caption).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
+    }
   }
 }

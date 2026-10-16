@@ -105,14 +105,27 @@ struct Device: Identifiable, Hashable {
   var state: String
   var model: String?
   var product: String?
+  /// Informações lidas do celular (nome comercial, bateria, Android…), quando já carregadas.
+  var info: DeviceInfo?
 
   var id: String { serial }
   var isReady: Bool { state == "device" }
   var isWifi: Bool { serial.contains(":") || serial.contains("_adb-tls-connect") }
   var connectionLabel: String { isWifi ? "Wi-Fi" : "USB" }
   var name: String {
+    if let market = info?.marketName, !market.isEmpty { return market }
     if let model, !model.isEmpty { return model.replacingOccurrences(of: "_", with: " ") }
     return serial
+  }
+  /// Endereço IP quando a conexão é por Wi-Fi (`192.168.8.22:5555`).
+  var ipAddress: String? {
+    guard isWifi, let host = serial.split(separator: ":").first, host.contains(".") else { return nil }
+    return String(host)
+  }
+  /// "Wi-Fi · 192.168.8.22" ou "USB".
+  var connectionDetail: String {
+    if let ip = ipAddress { return "Wi-Fi · \(ip)" }
+    return connectionLabel
   }
   var stateLabel: String {
     switch state {

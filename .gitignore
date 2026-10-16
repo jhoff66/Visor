@@ -3,3 +3,5 @@ build/
 *.dmg
 .DS_Store
 PLANO.md
+REDESIGN.md
+snapshots/

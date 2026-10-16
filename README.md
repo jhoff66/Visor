@@ -13,13 +13,15 @@
 
 ## O que faz
 
-- **Lista os celulares conectados** por USB ou Wi-Fi, com modelo, tipo de conexão e estado. Avisa quando falta autorizar a depuração USB.
+- **Lista os celulares conectados** por USB ou Wi-Fi, com o nome comercial (ex.: POCO C65), tipo de conexão e estado. Avisa quando falta autorizar a depuração USB.
+- **Mostra o celular na tela** com uma prévia ao vivo da tela dele, bateria, versão do Android e resolução.
 - **Espelha com um clique.** A tela do celular abre numa janela no Mac e você usa mouse e teclado nela.
 - **Ajusta a qualidade:** resolução máxima, bitrate, FPS, codec (H.264, H.265, AV1) e áudio.
 - **Opções úteis:** desligar a tela do celular durante o espelhamento, manter acordado, mostrar toques, sempre no topo, sem borda, tela cheia e só visualizar.
 - **Grava a tela** em `~/Movies/Visor`.
 - **Usa a câmera do celular** como fonte de vídeo (Android 12+).
-- **Presets** prontos (Padrão, Leve para Wi-Fi, Gravação, Apresentação) e os seus. O app lembra qual preset cada celular usa.
+- **Presets** prontos (Padrão, Leve para Wi-Fi, Gravação, Apresentação) e os seus, trocados com um clique. O app lembra qual preset cada celular usa.
+- **Opções em cartões** (Qualidade, Som, Tela do celular, Controle, Janela, Gravação, Câmera e Avançado), com o comando final do scrcpy visível para conferir.
 - **Wi-Fi:** liga o modo sem fio de um celular plugado, conecta por IP, pareia com código (Android 11+) e lembra os últimos IPs.
 - **Ações rápidas:** print da tela na Mesa, instalar APK e enviar arquivos, pelos botões ou arrastando para a janela.
 - **Barra de menus** com os celulares e o botão de espelhar.
@@ -50,6 +52,12 @@ Para conferir se o `adb` e o `scrcpy` embutidos funcionam, sem abrir janela:
 Visor.app/Contents/MacOS/Visor --check
 ```
 
+Para gerar imagens da interface com dados de exemplo, sem abrir janela:
+
+```sh
+Visor.app/Contents/MacOS/Visor --snapshot snapshots
+```
+
 ## Primeiro uso
 
 1. No Android, abra **Configurações › Sobre o telefone** e toque 7 vezes em **Número da versão** para liberar as Opções do desenvolvedor.
@@ -58,6 +66,10 @@ Visor.app/Contents/MacOS/Visor --check
 4. O celular aparece no Visor. Clique em **Espelhar**.
 
 Para usar sem fio, com o celular ainda no cabo, abra **Wi-Fi** e escolha **Ativar Wi-Fi neste celular**. Depois pode tirar o cabo.
+
+## Xiaomi, Redmi e POCO
+
+Esses celulares bloqueiam o clique vindo do computador até você ligar **Depuração USB (configurações de segurança)** nas Opções do desenvolvedor, o que exige conta Mi e chip com dados móveis. Se não der, ligue **Teclado físico (uhid)** e **Mouse físico (uhid)** no cartão Controle: o Mac vira um teclado e mouse de verdade para o celular. O mouse fica preso na janela; aperte **⌘** para soltar.
 
 ## Limites
 

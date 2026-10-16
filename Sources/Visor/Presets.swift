@@ -13,8 +13,17 @@ final class PresetStore: ObservableObject {
   @Published private(set) var presets: [Preset] = []
   private let storageKey = "presets.v1"
   private let selectionPrefix = "preset.selected."
+  /// Em memória (modo --snapshot): não lê nem grava nas preferências do usuário.
+  private let ephemeral: Bool
+  private var memorySelection: [String: UUID] = [:]
+
+  init(ephemeral: Bool) {
+    self.ephemeral = ephemeral
+    presets = Self.builtIn()
+  }
 
   init() {
+    ephemeral = false
     if let data = UserDefaults.standard.data(forKey: storageKey),
        let saved = try? JSONDecoder().decode([Preset].self, from: data), !saved.isEmpty {
       presets = saved
@@ -52,12 +61,17 @@ final class PresetStore: ObservableObject {
   }
 
   private func save() {
+    if ephemeral { return }
     if let data = try? JSONEncoder().encode(presets) {
       UserDefaults.standard.set(data, forKey: storageKey)
     }
   }
 
   func preset(for serial: String) -> Preset {
+    if ephemeral {
+      if let id = memorySelection[serial], let p = presets.first(where: { $0.id == id }) { return p }
+      return presets.first ?? Preset(name: "Padrão", options: Options())
+    }
     if let s = UserDefaults.standard.string(forKey: selectionPrefix + serial),
        let id = UUID(uuidString: s), let p = presets.first(where: { $0.id == id }) {
       return p
@@ -66,6 +80,7 @@ final class PresetStore: ObservableObject {
   }
 
   func select(_ id: UUID, for serial: String) {
+    if ephemeral { memorySelection[serial] = id; objectWillChange.send(); return }
     UserDefaults.standard.set(id.uuidString, forKey: selectionPrefix + serial)
     objectWillChange.send()
   }
